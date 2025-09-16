@@ -8,13 +8,30 @@ from .models import *
 
 
 
+from django.contrib.auth.decorators import login_required
 from django.http import FileResponse
+from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.colors import HexColor
-from io import BytesIO
-from django.contrib.auth.decorators import login_required
 
+from configapp.models import Person, Skill, Experience, Education, Project
+
+def split_text(text, max_length):
+    words = text.split()
+    lines = []
+    current_line = ""
+    for word in words:
+        if len(current_line) + len(word) + 1 <= max_length:
+            if current_line:
+                current_line += " "
+            current_line += word
+        else:
+            lines.append(current_line)
+            current_line = word
+    if current_line:
+        lines.append(current_line)
+    return lines
 
 @login_required(login_url='login')
 def download_cv(request):
@@ -28,26 +45,29 @@ def download_cv(request):
 
     y = height - 50
 
-    # Name and Title
+    # Person ma'lumotlari (faqat bitta Person mavjud deb faraz qilamiz)
+    about = Person.objects.first()
+    if not about:
+        about = Person(full_name="No Name", about_me="No information available.")
+
+    # Name and Contact
     p.setFont("Helvetica-Bold", 26)
     p.setFillColor(HexColor("#6EE7B7"))
-    p.drawString(40, y, "Elbek Nuraliyev")
+    p.drawString(40, y, about.full_name)
     y -= 30
 
-    p.setFont("Helvetica", 14)
+    p.setFont("Helvetica", 12)
     p.setFillColor(HexColor("#93C5FD"))
-    p.drawString(40, y, "Python/Django Backend Developer")
+    contact_info = f"Email: {about.email}"
+    if about.phone:
+        contact_info += f" | Phone: {about.phone}"
+    p.drawString(40, y, contact_info)
     y -= 40
 
-    # Summary
-    summary = (
-        "Energetic and detail-oriented backend developer with solid experience in building "
-        "robust, scalable web applications using Python, Django, and PostgreSQL. Passionate about clean code, "
-        "system design, and creating seamless user experiences. Strong background in REST APIs, Celery, and Docker."
-    )
+    # About Me / Summary
     p.setFont("Helvetica", 12)
     p.setFillColor(HexColor("#cfeef4"))
-    for line in split_text(summary, 100):
+    for line in split_text(about.about_me or "", 100):
         p.drawString(40, y, line)
         y -= 15
 
@@ -59,14 +79,17 @@ def download_cv(request):
     p.drawString(40, y, "Skills")
     y -= 20
 
-    skills = [
-        "Python", "Django", "Django Rest Framework", "PostgreSQL", "Celery",
-        "Redis", "Docker", "HTML5", "CSS3", "Git", "GitHub", "Linux", "API Development"
-    ]
+    skills = Skill.objects.all()
+    skill_list = []
+    for skill in skills:
+        if skill.level:
+            skill_list.append(f"{skill.name} ({skill.level})")
+        else:
+            skill_list.append(skill.name)
+
     p.setFont("Helvetica", 12)
     p.setFillColor(HexColor("#e6eef8"))
-
-    skill_line = " • ".join(skills)
+    skill_line = " • ".join(skill_list)
     for line in split_text(skill_line, 100):
         p.drawString(50, y, line)
         y -= 15
@@ -79,21 +102,21 @@ def download_cv(request):
     p.drawString(40, y, "Experience")
     y -= 20
 
-    experiences = [
-        ("2025 — Present", "Backend Developer — Acme Tech", "Developed scalable APIs, worked with Celery for async tasks, and managed PostgreSQL databases."),
-        ("2024 — 2025", "Freelance Developer", "Delivered custom Django-based web solutions for clients in e-commerce and education."),
-        ("2023 — 2024", "Junior Developer — CodeLab", "Assisted in development and deployment of internal CRM systems.")
-    ]
-
+    experiences = Experience.objects.order_by('-start_date')
     p.setFont("Helvetica", 12)
     p.setFillColor(HexColor("#e6eef8"))
-    for date, role, desc in experiences:
-        p.drawString(50, y, f"{date} | {role}")
+    for exp in experiences:
+        start = exp.start_date.strftime("%Y")
+        end = exp.end_date.strftime("%Y") if exp.end_date else "Present"
+        p.drawString(50, y, f"{start} — {end} | {exp.title} at {exp.company}")
         y -= 15
-        for line in split_text(desc, 100):
+        for line in split_text(exp.description, 100):
             p.drawString(60, y, f"• {line}")
             y -= 15
         y -= 5
+        if y < 100:
+            p.showPage()
+            y = height - 50
 
     y -= 10
 
@@ -103,18 +126,17 @@ def download_cv(request):
     p.drawString(40, y, "Education")
     y -= 20
 
-    educations = [
-        ("2024 — 2025", "Najot Ta'lim", "Backend Development (Python/Django)"),
-        ("2022 — 2024", "High School", "Major in Mathematics and Computer Science")
-    ]
-
+    educations = Education.objects.order_by('-start_date')
     p.setFont("Helvetica", 12)
     p.setFillColor(HexColor("#e6eef8"))
-    for date, place, field in educations:
-        p.drawString(50, y, f"{date} | {place}")
-        y -= 15
-        p.drawString(60, y, f"• {field}")
+    for edu in educations:
+        start = edu.start_date.strftime("%Y")
+        end = edu.end_date.strftime("%Y") if edu.end_date else "Present"
+        p.drawString(50, y, f"{start} — {end} | {edu.degree} — {edu.institution}")
         y -= 20
+        if y < 100:
+            p.showPage()
+            y = height - 50
 
     # Projects
     p.setFont("Helvetica-Bold", 14)
@@ -122,19 +144,13 @@ def download_cv(request):
     p.drawString(40, y, "Portfolio Projects")
     y -= 20
 
-    projects = [
-        ("Shoply E-commerce", "Full-featured online store with cart, checkout, and admin panel (Django, DRF, PostgreSQL)."),
-        ("Taxi Dispatcher", "System to manage taxi fleets, drivers, and trips with rating system (Django, Celery)."),
-        ("Headless Blog CMS", "API-first blog with markdown support and headless architecture."),
-        ("Task Manager", "To-do app with deadlines, tags, and user authentication.")
-    ]
-
+    projects = Project.objects.all()
     p.setFont("Helvetica", 12)
     p.setFillColor(HexColor("#e6eef8"))
-    for title, desc in projects:
-        p.drawString(50, y, f"{title}:")
+    for proj in projects:
+        p.drawString(50, y, f"{proj.title}:")
         y -= 15
-        for line in split_text(desc, 100):
+        for line in split_text(proj.description, 100):
             p.drawString(60, y, f"• {line}")
             y -= 15
         y -= 5
@@ -149,40 +165,23 @@ def download_cv(request):
     return FileResponse(buffer, as_attachment=True, filename="elbek_nuraliyev_cv.pdf")
 
 
-
-def split_text(text, max_chars):
-    """
-    Splits a long text into lines with max_chars characters
-    """
-    words = text.split()
-    lines = []
-    current_line = ""
-    for word in words:
-        if len(current_line + word) <= max_chars:
-            current_line += word + " "
-        else:
-            lines.append(current_line.strip())
-            current_line = word + " "
-    if current_line:
-        lines.append(current_line.strip())
-    return lines
-
-
 @login_required(login_url='login')
 def index(request):
-    personalinfo = Person.objects.first()
+    about = Person.objects.all()
     skills = Skill.objects.all()
     experiences = Experience.objects.all()
     educations = Education.objects.all()
     projects = Project.objects.all()
     context = {
-        'personalinfo': personalinfo,
+        'about':about,
         'skills': skills,
         'experiences': experiences,
         'educations': educations,
         'projects': projects
     }
-    return render(request, 'index.html',context=context)
+    return render(request, 'index.html', context=context)
+
+
 
 
 @login_required(login_url='login')

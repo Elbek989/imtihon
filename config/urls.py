@@ -26,9 +26,10 @@ from configapp.views import *
 
 
 urlpatterns = [
-    path('home', views.index, name='index'),
-    path('', views.login_views, name='login'),
+    path('', views.index, name='index'),
+    path('login', views.login_views, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('admin/', admin.site.urls,name='admin'),
 
     path('contact/', views.contact_message, name='contact'),
     path('download-cv/', views.download_cv, name='download_cv')
