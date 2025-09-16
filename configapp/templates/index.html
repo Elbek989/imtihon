@@ -1,0 +1,522 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Portfolio</title>
+    <style>
+        /* Reset and base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f5f8fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Navbar */
+        nav {
+            background: #fff;
+            box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: auto;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .navbar-menu {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .navbar-menu a {
+            font-weight: 600;
+        }
+        /* Responsive menu */
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+            }
+            .navbar-toggle {
+                display: block;
+                cursor: pointer;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #fff;
+            padding: 6rem 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-primary {
+            background-color: #fff;
+            color: #2575fc;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #e6e6e6;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 4rem 0;
+            background: #fff;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgb(0 0 0 / 0.05);
+        }
+        section:nth-of-type(even) {
+            background: #fefefe;
+        }
+        section h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+        .about-content {
+            max-width: 800px;
+            margin: auto;
+            font-size: 1.1rem;
+            text-align: center;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        /* Skills */
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: auto;
+        }
+        .skill {
+            background: #2575fc;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgb(37 117 252 / 0.5);
+            transition: 0.3s;
+            user-select: none;
+        }
+        .skill:hover {
+            background: #6a11cb;
+            box-shadow: 0 4px 10px rgb(106 17 203 / 0.7);
+        }
+
+        /* Projects */
+        .projects-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1100px;
+            margin: auto;
+        }
+        .project-card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-6px);
+        }
+        .project-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .project-content {
+            padding: 1rem 1.5rem;
+            flex-grow: 1;
+        }
+        .project-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #2575fc;
+        }
+        .project-desc {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        .project-links {
+            margin-top: auto;
+        }
+        .project-links a {
+            margin-right: 1rem;
+            font-weight: 600;
+            color: #007bff;
+        }
+
+        /* Experience */
+        .experience-list {
+            max-width: 900px;
+            margin: auto;
+        }
+        .experience-item {
+            border-left: 3px solid #2575fc;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .experience-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 10px;
+            width: 14px;
+            height: 14px;
+            background: #2575fc;
+            border-radius: 50%;
+        }
+        .experience-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+        .experience-company {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        .experience-date {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 0.7rem;
+        }
+        .experience-desc {
+            color: #444;
+            line-height: 1.5;
+        }
+
+        /* Education */
+        .education-list {
+            max-width: 900px;
+            margin: auto;
+        }
+        .education-item {
+            border-left: 3px solid #6a11cb;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .education-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 10px;
+            width: 14px;
+            height: 14px;
+            background: #6a11cb;
+            border-radius: 50%;
+        }
+        .education-degree {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+        .education-school {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        .education-date {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 0.7rem;
+        }
+
+        /* Contact */
+        .contact-form {
+            max-width: 600px;
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2575fc;
+            box-shadow: 0 0 5px rgba(37, 117, 252, 0.5);
+        }
+        button[type="submit"] {
+            background: #2575fc;
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button[type="submit"]:hover {
+            background: #6a11cb;
+        }
+
+        /* Footer */
+        footer {
+            background: #222;
+            color: #bbb;
+            text-align: center;
+            padding: 1rem 0;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: #6a11cb;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="container navbar">
+            <div class="navbar-brand">MyPortfolio</div>
+            <div class="navbar-toggle" id="navbarToggle">&#9776;</div>
+            <div class="navbar-menu" id="navbarMenu">
+                <a href="#hero">Home</a>
+                <a href="#about">About</a>
+                <a href="#skills">Skills</a>
+                <a href="#projects">Projects</a>
+                <a href="#experience">Experience</a>
+                <a href="#education">Education</a>
+                <a href="#contact">Contact</a>
+                <a href="{% url 'logout'%}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <h1>Hello, I'm Elbek </h1>
+        <p>I'm a passionate Backend Developer specializing in building (and occasionally designing) exceptional digital experiences.</p>
+        <a href="{% url 'download_cv' %}" class="btn-primary" style="margin-left: 1rem;">📄 CV PDF-ni Yuklash</a>
+        <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get In Touch</button>
+    </section>
+
+    <!-- About Me -->
+    <section id="about">
+        <h2>About Me</h2>
+        <p class="about-content">
+            Hello! My name is Elbek Nuraliyev, and I am a passionate backend developer specializing in Python and Django. For over a year, I have been studying and honing my skills at Najot Ta'lim, one of the leading IT education centers in Uzbekistan.
+
+I have experience building robust and scalable web applications, developing RESTful APIs, managing PostgreSQL databases, and implementing authentication systems. Additionally, I’ve worked with asynchronous task queues using Celery and have successfully deployed several Django-based projects.
+
+Beyond technical skills, I have strong problem-solving abilities, enjoy collaborating in teams, and am always eager to learn and grow. Currently, I am working on portfolio projects such as e-commerce websites, admin dashboards, and CMS platforms to further improve my expertise.
+
+When I’m not coding, I enjoy exploring new technologies, contributing to open-source projects, and mentoring beginner developers.
+        </p>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills">
+        <h2>My Skills</h2>
+        <div class="skills-list">
+            <div class="skill">HTML5</div>
+            <div class="skill">CSS3</div>
+            <div class="skill">Python</div>
+            <div class="skill">React</div>
+            <div class="skill">Vue.js</div>
+            <div class="skill">Node.js</div>
+            <div class="skill">Git</div>
+            <div class="skill">Webpack</div>
+            <div class="skill">Figma</div>
+            <div class="skill">REST APIs</div>
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+        <h2>Projects</h2>
+        <div class="projects-list">
+
+            <!-- Project 1 -->
+            <div class="project-card">
+                <img src="https://via.placeholder.com/400x180?text=Project+1" alt="Project 1" class="project-image" />
+                <div class="project-content">
+                    <h3 class="project-title">Portfolio Website</h3>
+                    <p class="project-desc">A personal portfolio website built with React and styled-components, featuring smooth animations and responsive design.</p>
+                    <div class="project-links">
+                        <a href="https://github.com/johndoe/portfolio" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <a href="https://johndoe.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card">
+                <img src="https://via.placeholder.com/400x180?text=Project+2" alt="Project 2" class="project-image" />
+                <div class="project-content">
+                    <h3 class="project-title">E-commerce Platform</h3>
+                    <p class="project-desc">A full-stack e-commerce platform built with Vue.js and Node.js, featuring user authentication and payment integration.</p>
+                    <div class="project-links">
+                        <a href="https://github.com/johndoe/ecommerce" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <a href="https://shop.johndoe.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card">
+                <img src="https://via.placeholder.com/400x180?text=Project+3" alt="Project 3" class="project-image" />
+                <div class="project-content">
+                    <h3 class="project-title">Task Manager App</h3>
+                    <p class="project-desc">A task management app with drag-and-drop functionality, real-time updates, and offline support.</p>
+                    <div class="project-links">
+                        <a href="https://github.com/johndoe/taskmanager" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <a href="https://tasks.johndoe.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- You can add more projects here -->
+        </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience">
+        <h2>Work Experience</h2>
+        <div class="experience-list">
+            <div class="experience-item">
+                <div class="experience-title">Senior Frontend Developer</div>
+                <div class="experience-company">Tech Solutions Inc.</div>
+                <div class="experience-date">Jan 2022 - Present</div>
+                <div class="experience-desc">
+                    Lead frontend development team for building scalable web applications using React, Redux, and TypeScript.
+                    Improved app performance by 30% and collaborated closely with designers and backend engineers.
+                </div>
+            </div>
+            <div class="experience-item">
+                <div class="experience-title">Frontend Developer</div>
+                <div class="experience-company">Creative Apps</div>
+                <div class="experience-date">Dec 2024 - Dec 2025</div>
+                <div class="experience-desc">
+                    Developed and maintained responsive user interfaces with Vue.js.
+                    Integrated REST APIs and worked on cross-browser compatibility and accessibility.
+                </div>
+            </div>
+            <div class="experience-item">
+                <div class="experience-title">Junior Web Developer</div>
+                <div class="experience-company">WebWorks Studio</div>
+                <div class="experience-date">Jan 2016 - May 2018</div>
+                <div class="experience-desc">
+                    Assisted in frontend development tasks, wrote reusable components, and maintained company websites.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education -->
+    <section id="education">
+        <h2>Education</h2>
+        <div class="education-list">
+            <div class="education-item">
+                <div class="education-degree">Bachelor of Science in Computer Science</div>
+                <div class="education-school">Najot Talim</div>
+                <div class="education-date">2024 - 2025</div>
+            </div>
+            <div class="education-item">
+                <div class="education-degree">Backend-Django</div>
+                <div class="education-school">Code Academy</div>
+                <div class="education-date">2025</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+        <h2>Contact Me</h2>
+        <form class="contact-form" id="contactForm">
+            <div class="form-group">
+                <label for="name">Name*</label>
+                <input type="text" id="name" name="name" placeholder="Your full name" required />
+            </div>
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required />
+            </div>
+            <div class="form-group">
+                <label for="message">Message*</label>
+                <textarea id="message" name="message" rows="6" placeholder="Write your message here..." required></textarea>
+            </div>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+<footer>
+    &copy; 2025 Nuraliyev Elbek. Built with ❤️ and code.
+    <br />
+    <a href="https://github.com/Elbek989" target="_blank" rel="noopener noreferrer">GitHub</a>
+</footer>
