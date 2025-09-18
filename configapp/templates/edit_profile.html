@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profil va Loyihalarni boshqarish</title>
+    <style>
+        body {
+            background-color: #f7fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            box-sizing: border-box;
+        }
+        .section {
+            flex: 1 1 400px;
+            min-width: 320px;
+        }
+        h2 {
+            color: #2563eb;
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+        input, textarea {
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+            resize: vertical;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 5px #3b82f6aa;
+        }
+        button {
+            background-color: #2563eb;
+            color: white;
+            font-weight: 700;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #1e40af;
+        }
+        ul.project-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.project-list li {
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #1e293b;
+        }
+        ul.project-list li strong {
+            color: #2563eb;
+        }
+        ul.project-list li a {
+            color: #2563eb;
+            text-decoration: none;
+            margin-left: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        ul.project-list li a:hover {
+            text-decoration: underline;
+        }
+        .logout-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #ef4444;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .logout-link:hover {
+            color: #b91c1c;
+        }
+        /* Django form error styling */
+        .errorlist {
+            color: #ef4444;
+            margin: -15px 0 15px 0;
+            font-size: 14px;
+            list-style-type: none;
+            padding-left: 0;
+        }
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Profilni tahrirlash bo'limi -->
+        <section class="section">
+            <h2>Profilni tahrirlash</h2>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                {% for field in form %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endfor %}
+
+                <button type="submit">Saqlash</button>
+            </form>
+
+            <a href="{% url 'logout' %}" class="logout-link">Chiqish (Logout)</a>
+        </section>
+
+        <!-- Loyihalarni boshqarish bo'limi -->
+        <section class="section">
+            <h2>Loyihalarni tahrirlash</h2>
+
+            <h3>Yangi loyiha qo'shish</h3>
+            <form method="post" action="{% url 'add_project' %}">
+                {% csrf_token %}
+                {{ project_form.as_p }}
+                <button type="submit">Qo'shish</button>
+            </form>
+
+            <h3>Mavjud loyihalar</h3>
+            <ul class="project-list">
+                {% for proj in projects %}
+                    <li>
+                        <strong>{{ proj.title }}</strong> - {{ proj.description }}
+                        {% if proj.link %}
+                            (<a href="{{ proj.link }}" target="_blank" rel="noopener noreferrer">Sayt</a>)
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li>Loyiha yo'q</li>
+                {% endfor %}
+            </ul>
+
+            <a href="{% url 'edit_profile' %}">Profilga qaytish</a>
+        </section>
+
+    </div>
+</body>
+</html>

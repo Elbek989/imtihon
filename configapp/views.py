@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+
 from .forms import *
 from .models import *
 
@@ -9,7 +11,7 @@ from .models import *
 
 
 from django.contrib.auth.decorators import login_required
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -207,7 +209,7 @@ def login_views(request):
             user = form.get_user()
             login(request, user)
             messages.success(request, f"Xush kelibsiz, {user.username}!")
-            return redirect("index")
+            return redirect("edit_profile")
         else:
             messages.error(request, "Login yoki parol xato!")
     else:
@@ -220,3 +222,61 @@ def logout_view(request):
     messages.info(request, "Siz tizimdan chiqdingiz.")
     return redirect("login")
 
+@login_required(login_url='login')
+def edit_profile(request):
+    person = Person.objects.first()  # yoki: person = Person.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        form = PersonForm(request.POST, instance=person)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Ma'lumotlar muvaffaqiyatli yangilandi.")
+            return redirect('index')
+    else:
+        form = PersonForm(instance=person)
+
+    return render(request, 'edit_profile.html', {'form': form})
+# from django.contrib.auth import logout
+# def login_views(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#
+#             return redirect('edit_profile')
+#         else:
+#             messages.error(request, "Username yoki parol noto'g'ri!")
+#     return render(request, 'login.html')
+@login_required(login_url='login')
+def edit_projects(request):
+    projects = Project.objects.all()
+
+    if request.method == 'POST':
+
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Loyiha qo‘shildi!")
+            return redirect('edit_projects')
+    else:
+        form = ProjectForm()
+
+    context = {
+        'projects': projects,
+        'form': form,
+    }
+    return render(request, 'edit_projects.html', context)
+@csrf_exempt
+def send_message(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+
+
+
+        return redirect('index')
+    return HttpResponse("Not Allowed", status=405)

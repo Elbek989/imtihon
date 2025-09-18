@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8" />
+    <title>Loyihalarni tahrirlash</title>
+    <style>
+        body {
+            background-color: #f7fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h2 {
+            color: #2563eb;
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-align: center;
+        }
+        h3 {
+            color: #1e40af;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        form {
+            margin-bottom: 40px;
+        }
+        button {
+            background-color: #2563eb;
+            color: white;
+            font-weight: 700;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #1e40af;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        ul li {
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            background-color: #e0e7ff;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        ul li a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        ul li a:hover {
+            text-decoration: underline;
+        }
+        a.back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #ef4444;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        a.back-link:hover {
+            color: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Loyihalarni tahrirlash</h2>
+
+        <h3>Yangi loyiha qo'shish</h3>
+        <form method="post" action="{% url 'edit_projects' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Qo'shish</button>
+        </form>
+
+        <h3>Mavjud loyihalar</h3>
+        <ul>
+            {% for proj in projects %}
+                <li>
+                    <strong>{{ proj.title }}</strong> - {{ proj.description }}
+                    {% if proj.link %}
+                        (<a href="{{ proj.link }}" target="_blank" rel="noopener noreferrer">Sayt</a>)
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li>Loyiha yo'q</li>
+            {% endfor %}
+        </ul>
+
+        <a href="{% url 'edit_profile' %}" class="back-link">Profilga qaytish</a>
+    </div>
+</body>
+</html>

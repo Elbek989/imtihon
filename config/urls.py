@@ -27,10 +27,14 @@ from configapp.views import *
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('login', views.login_views, name='login'),
+    path('login/', views.login_views, name='login'),
+    path('add_project/', views.edit_projects, name='add_project'),
+    path('edit_projects/', views.edit_projects, name='edit_projects'),
+    path('send-message/', views.send_message, name='send_message'),
+
     path('logout/', views.logout_view, name='logout'),
     path('admin/', admin.site.urls,name='admin'),
-
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('contact/', views.contact_message, name='contact'),
     path('download-cv/', views.download_cv, name='download_cv')
 
