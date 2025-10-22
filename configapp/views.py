@@ -35,7 +35,7 @@ def split_text(text, max_length):
         lines.append(current_line)
     return lines
 
-@login_required(login_url='login')
+
 def download_cv(request):
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
@@ -167,7 +167,7 @@ def download_cv(request):
     return FileResponse(buffer, as_attachment=True, filename="elbek_nuraliyev_cv.pdf")
 
 
-@login_required(login_url='login')
+
 def index(request):
     about = Person.objects.all()
     skills = Skill.objects.all()
